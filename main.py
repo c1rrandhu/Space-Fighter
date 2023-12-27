@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QLabel, QPushBut
 
 
 def load_image(name):
-    fullname = f'{name}'
+    fullname = f'data/{name}'
     image = pygame.image.load(fullname)
     return pygame.transform.scale(image, (100, 100))
 
