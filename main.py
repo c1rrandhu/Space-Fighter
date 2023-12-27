@@ -228,12 +228,11 @@ class StartPage(QMainWindow):
 
     def start(self):
         pygame.init()
-        board = Board(20, 30)
-        size = width, height = (board.left * 2 + 5 * board.cell_size, board.top * 2 + 7 * board.cell_size)
+
+        size = width, height = (690, 910)
         screen = pygame.display.set_mode(size)
         clock = pygame.time.Clock()
         pygame.display.set_caption('Bounce')
-        board.render(screen)
 
         all_sprites = pygame.sprite.Group()
         img = load_image('life.png')
@@ -247,27 +246,35 @@ class StartPage(QMainWindow):
 
         life2 = pygame.sprite.Sprite()
         life2.image = img
-        life2.rect = life1.image.get_rect()
+        life2.rect = life2.image.get_rect()
         life2.rect.x = 520
         life2.rect.y = 30
 
         life3 = pygame.sprite.Sprite()
         life3.image = img
-        life3.rect = life1.image.get_rect()
+        life3.rect = life3.image.get_rect()
         life3.rect.x = 450
         life3.rect.y = 30
+
+        ship = pygame.sprite.Sprite()
+        ship.image = load_image('ship.png')
+        ship.rect = ship.image.get_rect()
+        ship.rect.x = 300
+        ship.rect.y = 750
 
         all_sprites.add(life1)
         all_sprites.add(life2)
         all_sprites.add(life3)
+        all_sprites.add(ship)
 
         my_font = pygame.font.SysFont('Standard', 40)
         score_txt = my_font.render('SCORE:  0', False, (255, 255, 255))
 
-        screen.fill((0, 0, 60))
         k = 20
         surf = pygame.Surface((width - k, height - k))
-        surf.fill((0, 0, 60))
+        # back_img = pygame.transform.scale(load_image('background.jpg'), (625, 730))
+        # back_img = load_image('background.jpg')
+
         pygame.draw.line(surf, 'white', (0, 80), (width - 2 * k, 80), 1)
         pygame.draw.line(surf, 'white', (width - 2 * k, 80), (width - 2 * k, height - 2 * k), 1)
         pygame.draw.line(surf, 'white', (0, height - 2 * k), (width - 2 * k, height - 2 * k), 1)
@@ -281,6 +288,7 @@ class StartPage(QMainWindow):
                     exit()
 
             clock.tick(30)
+            # screen.blit(back_img, (0, 0))
             all_sprites.draw(screen)
             screen.blit(score_txt, (40, 45))
             pygame.display.flip()
@@ -317,45 +325,6 @@ class FinishPage(QMainWindow):
 
     def run(self):
         self.close()
-
-
-class Board:
-    # создание поля
-    def __init__(self, width, height):
-        self.width = width
-        self.height = height
-        self.board = [[0] * width for _ in range(height)]
-        # значения по умолчанию
-        self.left = 270
-        self.top = 350
-        self.cell_size = 30
-
-    # настройка внешнего вида
-    def set_view(self, left, top, cell_size):
-        self.left = left
-        self.top = top
-        self.cell_size = cell_size
-
-    # рисование
-    def render(self, screen):
-        for y in range(self.height):
-            for x in range(self.width):
-                pygame.draw.rect(screen, 'white', (self.left + x * self.cell_size, self.top + y * self.cell_size,
-                                                   self.cell_size, self.cell_size), 1)
-
-    def get_click(self, mouse_pos):
-        cell = self.get_cell(mouse_pos)
-        self.on_click(cell)
-        return cell
-
-    def on_click(self, cell_coords):
-        print(cell_coords)
-
-    def get_cell(self, mouse_pos):
-        if (0 < mouse_pos[0] - self.left < self.width * self.cell_size and
-                0 < mouse_pos[1] - self.top < self.height * self.cell_size):
-            return ((mouse_pos[0] - self.left) // self.cell_size, (mouse_pos[1] - self.top) // self.cell_size)
-        return None
 
 
 if __name__ == '__main__':
