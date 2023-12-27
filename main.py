@@ -2,7 +2,14 @@ import pygame
 import sys
 import io
 from PyQt5 import uic
-from PyQt5.QtWidgets import QApplication, QMainWindow
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QLabel, QPushButton
+
+
+def load_image(name):
+    fullname = f'{name}'
+    image = pygame.image.load(fullname)
+    return pygame.transform.scale(image, (100, 100))
+
 
 start_template = '''<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
@@ -205,11 +212,19 @@ class StartPage(QMainWindow):
         f = io.StringIO(start_template)
         uic.loadUi(f, self)
 
+        self.manual_page = Manual()
+
         self.lvl1.clicked.connect(self.run)
+        self.lvl2.clicked.connect(self.run)
+        self.boss.clicked.connect(self.run)
+        self.manual.clicked.connect(self.man)
 
     def run(self):
         self.close()
         self.start()
+
+    def man(self):
+        self.manual_page.show()
 
     def start(self):
         pygame.init()
@@ -220,14 +235,43 @@ class StartPage(QMainWindow):
         pygame.display.set_caption('Bounce')
         board.render(screen)
 
+        all_sprites = pygame.sprite.Group()
+        img = load_image('life.png')
+        img = pygame.transform.scale(img, (80, 50))
+
+        life1 = pygame.sprite.Sprite()
+        life1.image = img
+        life1.rect = life1.image.get_rect()
+        life1.rect.x = 590
+        life1.rect.y = 30
+
+        life2 = pygame.sprite.Sprite()
+        life2.image = img
+        life2.rect = life1.image.get_rect()
+        life2.rect.x = 520
+        life2.rect.y = 30
+
+        life3 = pygame.sprite.Sprite()
+        life3.image = img
+        life3.rect = life1.image.get_rect()
+        life3.rect.x = 450
+        life3.rect.y = 30
+
+        all_sprites.add(life1)
+        all_sprites.add(life2)
+        all_sprites.add(life3)
+
+        my_font = pygame.font.SysFont('Standard', 40)
+        score_txt = my_font.render('SCORE:  0', False, (255, 255, 255))
+
         screen.fill((0, 0, 60))
-        k = 10
+        k = 20
         surf = pygame.Surface((width - k, height - k))
         surf.fill((0, 0, 60))
-        pygame.draw.line(surf, 'white', (0, 0), (width - 2 * k, 0), 1)
-        pygame.draw.line(surf, 'white', (width - 2 * k, 0), (width - 2 * k, height - 2 * k), 1)
+        pygame.draw.line(surf, 'white', (0, 80), (width - 2 * k, 80), 1)
+        pygame.draw.line(surf, 'white', (width - 2 * k, 80), (width - 2 * k, height - 2 * k), 1)
         pygame.draw.line(surf, 'white', (0, height - 2 * k), (width - 2 * k, height - 2 * k), 1)
-        pygame.draw.line(surf, 'white', (0, 0), (0, height - 2 * k), 1)
+        pygame.draw.line(surf, 'white', (0, 80), (0, height - 2 * k), 1)
         screen.blit(surf, (k, k))
 
         running = True
@@ -237,9 +281,31 @@ class StartPage(QMainWindow):
                     exit()
 
             clock.tick(30)
+            all_sprites.draw(screen)
+            screen.blit(score_txt, (40, 45))
             pygame.display.flip()
 
         pygame.quit()
+
+
+class Manual(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.initUi()
+
+    def initUi(self):
+        self.setGeometry(600, 400, 300, 300)
+        self.setWindowTitle('Manual')
+        self.label = QLabel(self)
+        self.label.setGeometry(50, 20, 100, 40)
+        self.label.setText('THE RULES: ')
+
+        self.close_btn = QPushButton('Close', self)
+        self.close_btn.setGeometry(100, 200, 100, 30)
+        self.close_btn.clicked.connect(self.terminate)
+
+    def terminate(self):
+        self.close()
 
 
 class FinishPage(QMainWindow):
@@ -260,8 +326,8 @@ class Board:
         self.height = height
         self.board = [[0] * width for _ in range(height)]
         # значения по умолчанию
-        self.left = 50
-        self.top = 50
+        self.left = 270
+        self.top = 350
         self.cell_size = 30
 
     # настройка внешнего вида
