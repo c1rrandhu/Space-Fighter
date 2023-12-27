@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QLabel, QPushBut
 def load_image(name):
     fullname = f'data/{name}'
     image = pygame.image.load(fullname)
-    return pygame.transform.scale(image, (100, 100))
+    return image
 
 
 start_template = '''<?xml version="1.0" encoding="UTF-8"?>
@@ -235,8 +235,7 @@ class StartPage(QMainWindow):
         pygame.display.set_caption('Bounce')
 
         all_sprites = pygame.sprite.Group()
-        img = load_image('life.png')
-        img = pygame.transform.scale(img, (80, 50))
+        img = pygame.transform.scale(load_image('life.png'), (60, 50))
 
         life1 = pygame.sprite.Sprite()
         life1.image = img
@@ -257,29 +256,38 @@ class StartPage(QMainWindow):
         life3.rect.y = 30
 
         ship = pygame.sprite.Sprite()
-        ship.image = load_image('ship.png')
+        ship.image = pygame.transform.scale(load_image('ship.png'), (100, 100))
         ship.rect = ship.image.get_rect()
         ship.rect.x = 300
         ship.rect.y = 750
+
+        enemy = pygame.sprite.Sprite()
+        enemy.image = pygame.transform.scale(load_image('enemy.png'), (100, 100))
+        enemy.rect = ship.image.get_rect()
+        enemy.rect.x = 300
+        enemy.rect.y = 300
 
         all_sprites.add(life1)
         all_sprites.add(life2)
         all_sprites.add(life3)
         all_sprites.add(ship)
+        all_sprites.add(enemy)
 
         my_font = pygame.font.SysFont('Standard', 40)
         score_txt = my_font.render('SCORE:  0', False, (255, 255, 255))
 
         k = 20
-        surf = pygame.Surface((width - k, height - k))
-        # back_img = pygame.transform.scale(load_image('background.jpg'), (625, 730))
-        # back_img = load_image('background.jpg')
+        surf = pygame.Surface((650, 790))
+        back = pygame.transform.scale(load_image('background.jpg'), (650, 790))
 
-        pygame.draw.line(surf, 'white', (0, 80), (width - 2 * k, 80), 1)
-        pygame.draw.line(surf, 'white', (width - 2 * k, 80), (width - 2 * k, height - 2 * k), 1)
-        pygame.draw.line(surf, 'white', (0, height - 2 * k), (width - 2 * k, height - 2 * k), 1)
-        pygame.draw.line(surf, 'white', (0, 80), (0, height - 2 * k), 1)
-        screen.blit(surf, (k, k))
+        surf.blit(back, (0, 0))
+        pygame.draw.line(surf, 'white', (0, 0), (649, 0), 1)
+        pygame.draw.line(surf, 'white', (649, 0), (649, 789), 1)
+        pygame.draw.line(surf, 'white', (0, 789), (649, 789), 1)
+        pygame.draw.line(surf, 'white', (0, 0), (0, 789), 1)
+
+        screen.fill((0, 0, 30))
+        screen.blit(surf, (k, 100))
 
         running = True
         while running:
@@ -288,7 +296,6 @@ class StartPage(QMainWindow):
                     exit()
 
             clock.tick(30)
-            # screen.blit(back_img, (0, 0))
             all_sprites.draw(screen)
             screen.blit(score_txt, (40, 45))
             pygame.display.flip()
@@ -305,11 +312,22 @@ class Manual(QWidget):
         self.setGeometry(600, 400, 300, 300)
         self.setWindowTitle('Manual')
         self.label = QLabel(self)
-        self.label.setGeometry(50, 20, 100, 40)
-        self.label.setText('THE RULES: ')
+        self.label.setGeometry(0, 20, 400, 200)
+        self.label.setText('''            THE RULES:
+        
+        You play for the space-ship that has to 
+        defend from a group of asteroids.
+        
+        By moving your mouse horizontally you 
+        can control the position of your ship.
+        
+        By pressing "SPACE" you can 
+        shoot and destroy asteroids. 
+        
+        Stay alive!''')
 
         self.close_btn = QPushButton('Close', self)
-        self.close_btn.setGeometry(100, 200, 100, 30)
+        self.close_btn.setGeometry(100, 250, 100, 30)
         self.close_btn.clicked.connect(self.terminate)
 
     def terminate(self):
