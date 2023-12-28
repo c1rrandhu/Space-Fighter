@@ -9,28 +9,30 @@ from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 
 pygame.init()
 pygame.mixer.init()
-pygame.mixer.music.load('data/music.mp3')
+
+pygame.mixer.music.load('sounds/music.mp3')
 pygame.mixer.music.set_volume(0.2)
+
 pygame.mixer.music.play(-1)
-# pygame.mixer.music.load('data/music.mp3')
+# pygame.mixer.music.load('pictures/music.mp3')
 # pygame.mixer.music.set_volume(0.1)
 # pygame.mixer.music.play(-1)
-boom_sound = pygame.mixer.Sound('data/boom.wav')
+boom_sound = pygame.mixer.Sound('sounds/boom.wav')
 boom_sound.set_volume(0.4)
 
-punch_sound = pygame.mixer.Sound('data/punch.mp3')
+punch_sound = pygame.mixer.Sound('sounds/punch.mp3')
 punch_sound.set_volume(0.4)
 
-laser_sound = pygame.mixer.Sound('data/laser.mp3')
+laser_sound = pygame.mixer.Sound('sounds/laser.mp3')
 laser_sound.set_volume(0.15)
 
-gun_sound = pygame.mixer.Sound('data/gun.mp3')
+gun_sound = pygame.mixer.Sound('sounds/gun.mp3')
 gun_sound.set_volume(0.3)
 
-over_sound = pygame.mixer.Sound('data/game_over.mp3')
+over_sound = pygame.mixer.Sound('sounds/game_over.mp3')
 over_sound.set_volume(0.2)
 
-win_sound = pygame.mixer.Sound('data/win.mp3')
+win_sound = pygame.mixer.Sound('sounds/win.mp3')
 win_sound.set_volume(0.3)
 
 all_sprites = pygame.sprite.Group()
@@ -50,12 +52,14 @@ boom_group = pygame.sprite.Group()
 boom1_group = pygame.sprite.Group()
 
 LIFE_AMOUNT = 3
+
 ENEMY_AMOUNT = 4
+
 BOSS_LIVES = 10
 
 
 def load_image(name):
-    fullname = f'data/{name}'
+    fullname = f'pictures/{name}'
     image = pygame.image.load(fullname)
     return image
 
@@ -96,12 +100,14 @@ class Life(pygame.sprite.Sprite):
 class Boom(pygame.sprite.Sprite):
     def __init__(self, sheet, columns, rows, x, y):
         super().__init__(all_sprites)
+
         self.frames = []
         self.cut_sheet(sheet, columns, rows)
         self.cur_frame = 0
         self.image = self.frames[self.cur_frame]
         self.rect = self.rect.move(x, y)
         self.timer = 0
+
         self.rows, self.columns = rows, columns
 
     def cut_sheet(self, sheet, columns, rows):
@@ -115,9 +121,11 @@ class Boom(pygame.sprite.Sprite):
 
     def update(self):
         self.cur_frame = self.cur_frame + 1
+
         if self.cur_frame >= self.rows * self.columns - 1:
             self.rect.x = -100
             self.kill()
+
         self.image = self.frames[self.cur_frame]
 
 
@@ -130,7 +138,7 @@ class StartPage(QMainWindow):
         self.resize(625, 730)
         self.setWindowTitle('Galaxy Warrior')
 
-        self.pixmap = QPixmap('data/start_background.jpg')
+        self.pixmap = QPixmap('pictures/start_background.jpg')
         self.back = QLabel(self)
         self.back.setGeometry(0, 0, 625, 730)
         self.back.setPixmap(self.pixmap)
@@ -184,7 +192,9 @@ class Level1:
     def main(self):
         global LIFE_AMOUNT, all_sprites, ship_group, life_group, laser_group, boom_group, enemy_group, fire_group
         global boom1_group, ENEMY_AMOUNT
+
         LIFE_AMOUNT = 3
+
         ENEMY_AMOUNT = 3
 
         all_sprites = pygame.sprite.Group()
@@ -195,11 +205,14 @@ class Level1:
         enemy_group = pygame.sprite.Group()
         fire_group = pygame.sprite.Group()
         boom1_group = pygame.sprite.Group()
+
         pygame.init()
 
         size = width, height = (690, 910)
+
         self.screen = pygame.display.set_mode(size)
         self.clock = pygame.time.Clock()
+
         pygame.display.set_caption('Galaxy Warrior')
 
         my_font = pygame.font.SysFont('Standard', 40)
@@ -210,18 +223,21 @@ class Level1:
         pygame.mouse.set_visible(False)
 
         self.surf.blit(back, (0, 0))
+
         pygame.draw.line(self.surf, 'white', (0, 0), (649, 0), 1)
         pygame.draw.line(self.surf, 'white', (649, 0), (649, 789), 1)
         pygame.draw.line(self.surf, 'white', (0, 789), (649, 789), 1)
         pygame.draw.line(self.surf, 'white', (0, 0), (0, 789), 1)
 
         ship = Ship(all_sprites)
+
         Enemy(20, 170, time=30)
         Enemy(570, 100, direction=False, time=50)
         Enemy(300, 240, time=40)
         Life((590, 30), 1)
         Life((520, 30), 2)
         Life((450, 30), 3)
+
         fire_count = 100
         running = True
         while running:
@@ -259,19 +275,22 @@ class Level1:
 
             pygame.display.update()
             self.clock.tick(60)
+
         pygame.quit()
         pygame.init()
         pygame.mixer.init()
-        pygame.mixer.music.load('data/music.mp3')
+        pygame.mixer.music.load('sounds/music.mp3')
         pygame.mixer.music.set_volume(0.1)
         pygame.mixer.music.play(-1)
 
     def finish(self):
         pygame.mouse.set_visible(True)
+
         self.surf = pygame.Surface((690, 910))
         self.surf.blit(finish_back, (0, 0))
         self.screen.fill((0, 0, 100))
         self.screen.blit(self.surf, (0, 0))
+
         draw_text(self.screen, 'GAME OVER!', 70, 340, 150, 'red')
         draw_text(self.screen, 'press any key to continue', 20, 350, 600, 'white')
         pygame.display.flip()
@@ -286,6 +305,7 @@ class Level1:
 
     def win(self):
         pygame.mouse.set_visible(True)
+
         self.surf = pygame.Surface((690, 910))
         self.surf.blit(finish_back, (0, 0))
         self.screen.fill((0, 0, 100))
@@ -294,6 +314,7 @@ class Level1:
         draw_text(self.screen, 'press any key to continue', 20, 350, 600, 'white')
         pygame.display.flip()
         waiting = True
+
         while waiting:
             self.clock.tick(60)
             for event in pygame.event.get():
@@ -432,7 +453,7 @@ class Level2:
         pygame.quit()
         pygame.init()
         pygame.mixer.init()
-        pygame.mixer.music.load('data/music.mp3')
+        pygame.mixer.music.load('sounds/music.mp3')
         pygame.mixer.music.set_volume(0.1)
         pygame.mixer.music.play(-1)
 
@@ -603,7 +624,7 @@ class Level3:
         pygame.quit()
         pygame.init()
         pygame.mixer.init()
-        pygame.mixer.music.load('data/music.mp3')
+        pygame.mixer.music.load('sounds/music.mp3')
         pygame.mixer.music.set_volume(0.1)
         pygame.mixer.music.play(-1)
 
@@ -899,7 +920,7 @@ class FinishPage(QMainWindow):
         self.resize(625, 730)
         self.setWindowTitle('Galaxy Warrior')
 
-        self.pixmap = QPixmap('data/end_background.jpg')
+        self.pixmap = QPixmap('pictures/end_background.jpg')
         self.back = QLabel(self)
         self.back.setGeometry(0, 0, 625, 730)
         self.back.setPixmap(self.pixmap)
