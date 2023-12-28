@@ -1,8 +1,8 @@
 import pygame
 import sys
-import io
-from PyQt5 import uic
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QLabel, QPushButton
+
+all_sprites = pygame.sprite.Group()
 
 
 def load_image(name):
@@ -11,222 +11,58 @@ def load_image(name):
     return image
 
 
-start_template = '''<?xml version="1.0" encoding="UTF-8"?>
-<ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>625</width>
-    <height>730</height>
-   </rect>
-  </property>
-  <property name="windowTitle">
-   <string>MainWindow</string>
-  </property>
-  <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>100</x>
-      <y>90</y>
-      <width>441</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>30</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>Welcome to the &quot;Galaxy Warrior&quot;</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="lvl1">
-    <property name="geometry">
-     <rect>
-      <x>240</x>
-      <y>210</y>
-      <width>141</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>30</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>Level1</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="lvl2">
-    <property name="geometry">
-     <rect>
-      <x>240</x>
-      <y>290</y>
-      <width>141</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>30</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>Level2</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="boss">
-    <property name="geometry">
-     <rect>
-      <x>240</x>
-      <y>370</y>
-      <width>141</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>30</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>BOSS</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="manual">
-    <property name="geometry">
-     <rect>
-      <x>240</x>
-      <y>470</y>
-      <width>141</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>30</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>Manual</string>
-    </property>
-   </widget>
-  </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>625</width>
-     <height>21</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QStatusBar" name="statusbar"/>
- </widget>
- <resources/>
- <connections/>
-</ui>
-'''
-
-template = '''<?xml version="1.0" encoding="UTF-8"?>
-<ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>625</width>
-    <height>730</height>
-   </rect>
-  </property>
-  <property name="windowTitle">
-   <string>MainWindow</string>
-  </property>
-  <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>220</x>
-      <y>110</y>
-      <width>181</width>
-      <height>61</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>30</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>GAME OVER!</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="restart_btn">
-    <property name="geometry">
-     <rect>
-      <x>200</x>
-      <y>290</y>
-      <width>221</width>
-      <height>111</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>30</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>Quit</string>
-    </property>
-   </widget>
-  </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>625</width>
-     <height>21</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QStatusBar" name="statusbar"/>
- </widget>
- <resources/>
- <connections/>
-</ui>
-'''
-
-
 class StartPage(QMainWindow):
     def __init__(self):
         super().__init__()
-        f = io.StringIO(start_template)
-        uic.loadUi(f, self)
+        self.initUi()
+
+    def initUi(self):
+        self.resize(625, 730)
+        self.setWindowTitle('Galaxy Warrior')
+
+        self.title = QLabel('Welcome to the "Galaxy Warrior"', self)
+        self.title.setGeometry(100, 90, 441, 41)
+        self.title.setStyleSheet('font: 30pt Standard')
+
+        self.lvl1 = QPushButton('Level1', self)
+        self.lvl1.setGeometry(240, 210, 141, 51)
+        self.lvl1.setStyleSheet('font: 30pt Standard')
+
+        self.lvl2 = QPushButton('Level2', self)
+        self.lvl2.setGeometry(240, 290, 141, 51)
+        self.lvl2.setStyleSheet('font: 30pt Standard')
+
+        self.boss = QPushButton('BOSS', self)
+        self.boss.setGeometry(240, 370, 141, 51)
+        self.boss.setStyleSheet('font: 30pt Standard')
+
+        self.manual = QPushButton('Manual', self)
+        self.manual.setGeometry(240, 470, 141, 51)
+        self.manual.setStyleSheet('font: 30pt Standard')
 
         self.manual_page = Manual()
 
-        self.lvl1.clicked.connect(self.run)
-        self.lvl2.clicked.connect(self.run)
-        self.boss.clicked.connect(self.run)
+        self.lvl1.clicked.connect(self.level1)
+        self.lvl2.clicked.connect(self.level1)
+        self.boss.clicked.connect(self.level1)
         self.manual.clicked.connect(self.man)
-
-    def run(self):
-        self.close()
-        self.start()
 
     def man(self):
         self.manual_page.show()
 
-    def start(self):
+    def level1(self):
+        s = GameWindow()
+        s.show()
+        self.close()
+
+
+class GameWindow(StartPage):
+    def __init__(self):
+        super().__init__()
+        self.sprites_init()
+        self.main()
+
+    def main(self):
         pygame.init()
 
         size = width, height = (690, 910)
@@ -234,7 +70,45 @@ class StartPage(QMainWindow):
         clock = pygame.time.Clock()
         pygame.display.set_caption('Bounce')
 
-        all_sprites = pygame.sprite.Group()
+        my_font = pygame.font.SysFont('Standard', 40)
+        score_txt = my_font.render('SCORE:  0', False, (255, 255, 255))
+
+        k = 20
+        surf = pygame.Surface((650, 790))
+        # pygame.mouse.set_visible(False)
+        back = pygame.transform.scale(load_image('background.jpg'), (650, 790))
+
+        surf.blit(back, (0, 0))
+        pygame.draw.line(surf, 'white', (0, 0), (649, 0), 1)
+        pygame.draw.line(surf, 'white', (649, 0), (649, 789), 1)
+        pygame.draw.line(surf, 'white', (0, 789), (649, 789), 1)
+        pygame.draw.line(surf, 'white', (0, 0), (0, 789), 1)
+
+        ship = Ship(all_sprites)
+        running = True
+        while running:
+            all_sprites.update()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    exit()
+                elif event.type == pygame.MOUSEMOTION:
+                    all_sprites.update(event.pos, event)
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        Fire(all_sprites)
+                        all_sprites.update(ship.rect, event)
+
+            screen.fill((0, 0, 30))
+            screen.blit(surf, (k, 100))
+            screen.blit(score_txt, (40, 45))
+            all_sprites.draw(screen)
+
+            pygame.display.update()
+            clock.tick(60)
+
+        pygame.quit()
+
+    def sprites_init(self):
         img = pygame.transform.scale(load_image('life.png'), (60, 50))
 
         life1 = pygame.sprite.Sprite()
@@ -270,37 +144,45 @@ class StartPage(QMainWindow):
         all_sprites.add(life1)
         all_sprites.add(life2)
         all_sprites.add(life3)
-        all_sprites.add(ship)
-        all_sprites.add(enemy)
+        # all_sprites.add(ship)
+        # all_sprites.add(enemy)
 
-        my_font = pygame.font.SysFont('Standard', 40)
-        score_txt = my_font.render('SCORE:  0', False, (255, 255, 255))
 
-        k = 20
-        surf = pygame.Surface((650, 790))
-        back = pygame.transform.scale(load_image('background.jpg'), (650, 790))
+class Ship(pygame.sprite.Sprite):
+    def __init__(self, *group):
+        super().__init__(*group)
+        self.image = pygame.transform.scale(load_image('ship.png'), (100, 100))
+        self.rect = self.image.get_rect()
+        self.rect.x = 300
+        self.rect.y = 750
 
-        surf.blit(back, (0, 0))
-        pygame.draw.line(surf, 'white', (0, 0), (649, 0), 1)
-        pygame.draw.line(surf, 'white', (649, 0), (649, 789), 1)
-        pygame.draw.line(surf, 'white', (0, 789), (649, 789), 1)
-        pygame.draw.line(surf, 'white', (0, 0), (0, 789), 1)
+    def update(self, pos=(300, 750), *args):
+        if args and args[0].type == pygame.MOUSEMOTION:
+            if pos[0] < 70:
+                self.rect.x = 20
+            elif pos[0] >= 620:
+                self.rect.x = 569
+            else:
+                self.rect.x = pos[0] - 50
 
-        screen.fill((0, 0, 30))
-        screen.blit(surf, (k, 100))
 
-        running = True
-        while running:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    exit()
+class Fire(pygame.sprite.Sprite):
+    image = pygame.transform.scale(load_image('fire.png'), (40, 60))
 
-            clock.tick(30)
-            all_sprites.draw(screen)
-            screen.blit(score_txt, (40, 45))
-            pygame.display.flip()
+    def __init__(self, *group):
+        super().__init__(*group)
+        self.image = Fire.image
+        self.rect = self.image.get_rect()
 
-        pygame.quit()
+        # self.mask = pygame.mask.from_surface(self.image)
+
+    def update(self, pos=None, *args):
+        if args and '768-KeyDown' in str(args[0]) and pos:
+            self.rect.x = pos[0] + 30
+            self.rect.y = pos[1] - 60
+        self.rect = self.rect.move(0, -5)
+        if self.rect.y < 95:
+            self.rect.x = -100
 
 
 class Manual(QWidget):
@@ -337,11 +219,23 @@ class Manual(QWidget):
 class FinishPage(QMainWindow):
     def __init__(self):
         super().__init__()
-        f = io.StringIO(template)
-        uic.loadUi(f, self)
-        self.restart_btn.clicked.connect(self.run)
+        self.initUi()
 
-    def run(self):
+    def initUi(self):
+        self.resize(625, 730)
+        self.setWindowTitle('Galaxy Warrior')
+
+        self.title = QLabel('GAME OVER!', self)
+        self.title.setGeometry(220, 110, 181, 61)
+        self.title.setStyleSheet('font: 30pt Standard')
+
+        self.finish_btn = QPushButton('Quit', self)
+        self.finish_btn.setGeometry(200, 290, 221, 111)
+        self.finish_btn.setStyleSheet('font: 30pt Standard')
+
+        self.finish_btn.clicked.connect(self.finish)
+
+    def finish(self):
         self.close()
 
 
