@@ -1,6 +1,10 @@
 import pygame
 import sys
+import os
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QLabel, QPushButton
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtCore import QUrl
+from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 
 all_sprites = pygame.sprite.Group()
 
@@ -11,52 +15,79 @@ def load_image(name):
     return image
 
 
+def load_mp(filename):
+    # absolute path
+    url = QUrl.fromLocalFile(os.path.abspath(f'data/{filename}'))
+    content = QMediaContent(url)
+    player = QMediaPlayer()
+    player.setMedia(content)
+    return player
+
+
 class StartPage(QMainWindow):
     def __init__(self):
         super().__init__()
         self.initUi()
+        self.player.play()
 
     def initUi(self):
         self.resize(625, 730)
         self.setWindowTitle('Galaxy Warrior')
 
-        self.title = QLabel('Welcome to the "Galaxy Warrior"', self)
+        self.pixmap = QPixmap('data/start_background.jpg')
+        self.back = QLabel(self)
+        self.back.setGeometry(0, 0, 625, 730)
+        self.back.setPixmap(self.pixmap)
+
+        self.title = QLabel('Welcome to the "Galaxy Warrior"!', self)
         self.title.setGeometry(100, 90, 441, 41)
-        self.title.setStyleSheet('font: 30pt Standard')
+        self.title.setStyleSheet('font: 30pt Standard;')
 
         self.lvl1 = QPushButton('Level1', self)
         self.lvl1.setGeometry(240, 210, 141, 51)
-        self.lvl1.setStyleSheet('font: 30pt Standard')
+        self.lvl1.setStyleSheet('font: 30pt Standard; color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);')
 
         self.lvl2 = QPushButton('Level2', self)
         self.lvl2.setGeometry(240, 290, 141, 51)
-        self.lvl2.setStyleSheet('font: 30pt Standard')
+        self.lvl2.setStyleSheet('font: 30pt Standard; background-color: rgb(0, 0, 255);')
 
         self.boss = QPushButton('BOSS', self)
         self.boss.setGeometry(240, 370, 141, 51)
-        self.boss.setStyleSheet('font: 30pt Standard')
+        self.boss.setStyleSheet('font: 30pt Standard; color: rgb(255, 255, 255); background-color: rgb(255, 0, 0);')
 
         self.manual = QPushButton('Manual', self)
-        self.manual.setGeometry(240, 470, 141, 51)
-        self.manual.setStyleSheet('font: 30pt Standard')
+        self.manual.setGeometry(240, 500, 141, 51)
+        self.manual.setStyleSheet('font: 30pt Standard;')
 
         self.manual_page = Manual()
 
         self.lvl1.clicked.connect(self.level1)
-        self.lvl2.clicked.connect(self.level1)
-        self.boss.clicked.connect(self.level1)
+        self.lvl2.clicked.connect(self.level2)
+        self.boss.clicked.connect(self.boss_game)
         self.manual.clicked.connect(self.man)
+
+        self.player = load_mp('music.mp3')
+        self.player.play()
 
     def man(self):
         self.manual_page.show()
 
     def level1(self):
-        s = GameWindow()
-        s.show()
+        self.player.stop()
+        self.close()
+        GameWindow()
+
+    def level2(self):
+        self.f = FinishPage()
+        self.f.show()
+        self.player.stop()
         self.close()
 
+    def boss_game(self):
+        pass
 
-class GameWindow(StartPage):
+
+class GameWindow:
     def __init__(self):
         super().__init__()
         self.sprites_init()
@@ -68,7 +99,7 @@ class GameWindow(StartPage):
         size = width, height = (690, 910)
         screen = pygame.display.set_mode(size)
         clock = pygame.time.Clock()
-        pygame.display.set_caption('Bounce')
+        pygame.display.set_caption('Galaxy Warrior')
 
         my_font = pygame.font.SysFont('Standard', 40)
         score_txt = my_font.render('SCORE:  0', False, (255, 255, 255))
@@ -194,10 +225,10 @@ class Manual(QWidget):
         self.setGeometry(600, 400, 300, 300)
         self.setWindowTitle('Manual')
         self.label = QLabel(self)
-        self.label.setGeometry(0, 20, 400, 200)
-        self.label.setText('''            THE RULES:
+        self.label.setGeometry(-15, 0, 420, 260)
+        self.label.setText('''        RULES:
         
-        You play for the space-ship that has to 
+        You play for the space ship that has to 
         defend from a group of asteroids.
         
         By moving your mouse horizontally you 
@@ -206,10 +237,12 @@ class Manual(QWidget):
         By pressing "SPACE" you can 
         shoot and destroy asteroids. 
         
-        Stay alive!''')
+                                 Stay alive!''')
+        self.label.setStyleSheet('font: 15pt Standard')
 
         self.close_btn = QPushButton('Close', self)
-        self.close_btn.setGeometry(100, 250, 100, 30)
+        self.close_btn.setGeometry(100, 250, 100, 40)
+        self.close_btn.setStyleSheet('font: 20pt Standard')
         self.close_btn.clicked.connect(self.terminate)
 
     def terminate(self):
@@ -225,18 +258,37 @@ class FinishPage(QMainWindow):
         self.resize(625, 730)
         self.setWindowTitle('Galaxy Warrior')
 
+        self.pixmap = QPixmap('data/end_background.jpg')
+        self.back = QLabel(self)
+        self.back.setGeometry(0, 0, 625, 730)
+        self.back.setPixmap(self.pixmap)
+
         self.title = QLabel('GAME OVER!', self)
-        self.title.setGeometry(220, 110, 181, 61)
-        self.title.setStyleSheet('font: 30pt Standard')
+        self.title.setGeometry(90, 50, 500, 65)
+        self.title.setStyleSheet('font: 80pt Standard; color: rgb(255, 0, 0)')
 
         self.finish_btn = QPushButton('Quit', self)
-        self.finish_btn.setGeometry(200, 290, 221, 111)
+        self.finish_btn.setGeometry(330, 600, 150, 70)
         self.finish_btn.setStyleSheet('font: 30pt Standard')
 
+        self.restart_btn = QPushButton('Restart', self)
+        self.restart_btn.setGeometry(150, 600, 150, 70)
+        self.restart_btn.setStyleSheet('font: 30pt Standard')
+
         self.finish_btn.clicked.connect(self.finish)
+        self.restart_btn.clicked.connect(self.restart_game)
+
+        self.player = load_mp('fail.mp3')
+        self.player.play()
 
     def finish(self):
         self.close()
+
+    def restart_game(self):
+        self.player.stop()
+        self.close()
+        ex.show()
+        ex.player.play()
 
 
 if __name__ == '__main__':
