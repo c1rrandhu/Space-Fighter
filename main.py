@@ -994,13 +994,16 @@ class Manual(QWidget):
         self.close()
 
     def download_rules(self):
-        location = os.path.abspath(QFileDialog.getSaveFileName(self, 'Save File', '', 'txt(*.txt)')[0])
-        if location:
-            with open(location, 'w') as manual:
-                data_txt = [x.strip() for x in open('data/database/manual.txt')]
-                for x in data_txt:
-                    manual.write(x)
-                    manual.write('\n')
+        try:
+            location = os.path.abspath(QFileDialog.getSaveFileName(self, 'Save File', '', 'txt(*.txt)')[0])
+            if location:
+                with open(location, 'w') as manual:
+                    data_txt = [x.strip() for x in open('data/database/manual.txt')]
+                    for x in data_txt:
+                        manual.write(x)
+                        manual.write('\n')
+        except Exception:
+            pass
 
 
 class FinishPage(QMainWindow):
