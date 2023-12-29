@@ -1,38 +1,34 @@
-import pygame
-import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QLabel, QPushButton
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QLabel, QPushButton
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtCore import QUrl
-from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
+import pygame
+import sys
 
+
+boss = None
 
 pygame.init()
 pygame.mixer.init()
 
-pygame.mixer.music.load('sounds/music.mp3')
+pygame.mixer.music.load('data/sounds/music.mp3')
 pygame.mixer.music.set_volume(0.2)
 
 pygame.mixer.music.play(-1)
-# pygame.mixer.music.load('pictures/music.mp3')
-# pygame.mixer.music.set_volume(0.1)
-# pygame.mixer.music.play(-1)
-boom_sound = pygame.mixer.Sound('sounds/boom.wav')
+boom_sound = pygame.mixer.Sound('data/sounds/boom.wav')
 boom_sound.set_volume(0.4)
 
-punch_sound = pygame.mixer.Sound('sounds/punch.mp3')
+punch_sound = pygame.mixer.Sound('data/sounds/punch.mp3')
 punch_sound.set_volume(0.4)
 
-laser_sound = pygame.mixer.Sound('sounds/laser.mp3')
+laser_sound = pygame.mixer.Sound('data/sounds/laser.mp3')
 laser_sound.set_volume(0.15)
 
-gun_sound = pygame.mixer.Sound('sounds/gun.mp3')
+gun_sound = pygame.mixer.Sound('data/sounds/gun.mp3')
 gun_sound.set_volume(0.3)
 
-over_sound = pygame.mixer.Sound('sounds/game_over.mp3')
+over_sound = pygame.mixer.Sound('data/sounds/game_over.mp3')
 over_sound.set_volume(0.2)
 
-win_sound = pygame.mixer.Sound('sounds/win.mp3')
+win_sound = pygame.mixer.Sound('data/sounds/win.mp3')
 win_sound.set_volume(0.3)
 
 all_sprites = pygame.sprite.Group()
@@ -59,13 +55,13 @@ BOSS_LIVES = 10
 
 
 def load_image(name):
-    fullname = f'pictures/{name}'
+    fullname = f'data/pictures/{name}'
     image = pygame.image.load(fullname)
     return image
 
 
 back = pygame.transform.scale(load_image('background.jpg'), (650, 790))
-finish_back = pygame.transform.scale(load_image('end_background.jpg'), (690, 910))
+finish_back = pygame.transform.scale(load_image('end_background.png'), (690, 910))
 
 font_name = pygame.font.match_font('arial')
 
@@ -78,6 +74,7 @@ def draw_text(surf, text, size, x, y, color):
     surf.blit(text_surface, text_rect)
 
 
+# class modulating life's erasing
 class Life(pygame.sprite.Sprite):
     image = pygame.transform.scale(load_image('life.png'), (60, 50))
     minus_life = pygame.transform.scale(load_image('minus_life.png'), (60, 50))
@@ -138,7 +135,7 @@ class StartPage(QMainWindow):
         self.resize(625, 730)
         self.setWindowTitle('Galaxy Warrior')
 
-        self.pixmap = QPixmap('pictures/start_background.jpg')
+        self.pixmap = QPixmap('data/pictures/start_background.jpg')
         self.back = QLabel(self)
         self.back.setGeometry(0, 0, 625, 730)
         self.back.setPixmap(self.pixmap)
@@ -160,8 +157,12 @@ class StartPage(QMainWindow):
         self.boss.setStyleSheet('font: 30pt Standard; color: rgb(255, 255, 255); background-color: rgb(255, 0, 0);')
 
         self.manual = QPushButton('Manual', self)
-        self.manual.setGeometry(240, 500, 141, 51)
-        self.manual.setStyleSheet('font: 30pt Standard;')
+        self.manual.setGeometry(240, 480, 141, 51)
+        self.manual.setStyleSheet('font: 30pt Standard; color: rgb(255, 255, 255); background-color: rgb(0, 0, 0);')
+
+        self.quit_btn = QPushButton('Quit', self)
+        self.quit_btn.setGeometry(235, 540, 151, 56)
+        self.quit_btn.setStyleSheet('font: 30pt Standard')
 
         self.manual_page = Manual()
 
@@ -169,6 +170,7 @@ class StartPage(QMainWindow):
         self.lvl2.clicked.connect(self.level2)
         self.boss.clicked.connect(self.boss_game)
         self.manual.clicked.connect(self.man)
+        self.quit_btn.clicked.connect(self.terminate)
 
     def man(self):
         self.manual_page.show()
@@ -181,6 +183,9 @@ class StartPage(QMainWindow):
 
     def boss_game(self):
         Level3()
+
+    def terminate(self):
+        self.close()
 
 
 class Level1:
@@ -208,7 +213,7 @@ class Level1:
 
         pygame.init()
 
-        size = width, height = (690, 910)
+        size = (690, 910)
 
         self.screen = pygame.display.set_mode(size)
         self.clock = pygame.time.Clock()
@@ -279,7 +284,7 @@ class Level1:
         pygame.quit()
         pygame.init()
         pygame.mixer.init()
-        pygame.mixer.music.load('sounds/music.mp3')
+        pygame.mixer.music.load('data/sounds/music.mp3')
         pygame.mixer.music.set_volume(0.1)
         pygame.mixer.music.play(-1)
 
@@ -356,12 +361,6 @@ class Level1:
         enemy.rect.x = 300
         enemy.rect.y = 300
 
-        # all_sprites.add(self.life1)
-        # all_sprites.add(self.life2)
-        # all_sprites.add(self.life3)
-        # all_sprites.add(ship)
-        # all_sprites.add(enemy)
-
 
 class Level2:
     def __init__(self):
@@ -385,7 +384,7 @@ class Level2:
         boom1_group = pygame.sprite.Group()
         pygame.init()
 
-        size = width, height = (690, 910)
+        size = (690, 910)
         self.screen = pygame.display.set_mode(size)
         self.clock = pygame.time.Clock()
         pygame.display.set_caption('Galaxy Warrior')
@@ -453,7 +452,7 @@ class Level2:
         pygame.quit()
         pygame.init()
         pygame.mixer.init()
-        pygame.mixer.music.load('sounds/music.mp3')
+        pygame.mixer.music.load('data/sounds/music.mp3')
         pygame.mixer.music.set_volume(0.1)
         pygame.mixer.music.play(-1)
 
@@ -526,15 +525,6 @@ class Level2:
         enemy.rect.x = 300
         enemy.rect.y = 300
 
-        # all_sprites.add(self.life1)
-        # all_sprites.add(self.life2)
-        # all_sprites.add(self.life3)
-        # all_sprites.add(ship)
-        # all_sprites.add(enemy)
-
-
-boss = None
-
 
 class Level3:
     def __init__(self):
@@ -559,7 +549,7 @@ class Level3:
         boom1_group = pygame.sprite.Group()
         pygame.init()
 
-        size = width, height = (690, 910)
+        size = (690, 910)
         self.screen = pygame.display.set_mode(size)
         self.clock = pygame.time.Clock()
         pygame.display.set_caption('Galaxy Warrior')
@@ -624,7 +614,7 @@ class Level3:
         pygame.quit()
         pygame.init()
         pygame.mixer.init()
-        pygame.mixer.music.load('sounds/music.mp3')
+        pygame.mixer.music.load('data/sounds/music.mp3')
         pygame.mixer.music.set_volume(0.1)
         pygame.mixer.music.play(-1)
 
@@ -634,7 +624,7 @@ class Level3:
         self.surf.blit(finish_back, (0, 0))
         self.screen.fill((0, 0, 100))
         self.screen.blit(self.surf, (0, 0))
-        draw_text(self.screen, 'GAME OVER!', 70, 340, 150, 'red')
+        draw_text(self.screen, 'GAME OVER!', 70, 340, 120, 'red')
         draw_text(self.screen, 'press any key to continue', 20, 350, 600, 'white')
         pygame.display.flip()
         waiting = True
@@ -696,12 +686,6 @@ class Level3:
         enemy.rect = ship.image.get_rect()
         enemy.rect.x = 300
         enemy.rect.y = 300
-
-        # all_sprites.add(self.life1)
-        # all_sprites.add(self.life2)
-        # all_sprites.add(self.life3)
-        # all_sprites.add(ship)
-        # all_sprites.add(enemy)
 
 
 class Ship(pygame.sprite.Sprite):
@@ -806,7 +790,6 @@ class Fire(pygame.sprite.Sprite):
         self.rect.x = pos[0] + 30
         self.rect.y = pos[1] - 60
         self.add(fire_group)
-        # self.mask = pygame.mask.from_surface(self.image)
 
     def update(self, pos=None, *args):
         # if args and '768-KeyDown' in str(args[0]) and pos:
@@ -857,7 +840,6 @@ class Laser(pygame.sprite.Sprite):
         self.rect.x = pos[0] - 30
         self.rect.y = pos[1] + 60
         self.add(laser_group)
-        # self.mask = pygame.mask.from_surface(self.image)
 
     def update(self, pos=None, *args):
         # if args and '768-KeyDown' in str(args[0]) and pos:
@@ -920,7 +902,7 @@ class FinishPage(QMainWindow):
         self.resize(625, 730)
         self.setWindowTitle('Galaxy Warrior')
 
-        self.pixmap = QPixmap('pictures/end_background.jpg')
+        self.pixmap = QPixmap('data/pictures/end_background.jpg')
         self.back = QLabel(self)
         self.back.setGeometry(0, 0, 625, 730)
         self.back.setPixmap(self.pixmap)
