@@ -1,7 +1,8 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QLabel, QPushButton
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QLabel, QPushButton, QFileDialog
 from PyQt5.QtGui import QPixmap
 import pygame
 import sys
+import os
 
 boss = None
 
@@ -201,7 +202,6 @@ class StartPage(QMainWindow):
 
 # page of the first level
 
-
 class Level1:
     def __init__(self):
         super().__init__()
@@ -255,9 +255,10 @@ class Level1:
 
         ship = Ship(all_sprites)
 
-        Enemy(20, 170, time=30)
-        Enemy(570, 100, direction=False, time=50)
-        Enemy(300, 240, time=40)
+        with open('data/database/lvl1.txt', 'r') as lvl1:
+            for x in lvl1:
+                x, y, direction, time = x.split()
+                Enemy(int(x), int(y), direction=direction, time=int(time))
 
         Life((590, 30), 1)
         Life((520, 30), 2)
@@ -407,7 +408,6 @@ class Level1:
 
 # page of the second level
 
-
 class Level2:
     def __init__(self):
         super().__init__()
@@ -456,12 +456,11 @@ class Level2:
         pygame.draw.line(self.surf, 'white', (0, 0), (0, 789), 1)
 
         ship = Ship(all_sprites)
-        Enemy(20, 100, time=30, size=(90, 90))
-        Enemy(60, 200, time=30, size=(70, 70))
-        Enemy(100, 280, time=30, size=(50, 50))
-        Enemy(140, 340, time=30, size=(50, 50))
-        Enemy(180, 400, time=30, size=(40, 40))
-        Enemy(220, 450, time=30, size=(40, 40))
+
+        with open('data/database/lvl2.txt', 'r') as lvl2:
+            for x in lvl2:
+                x, y, time, a, b = map(int, x.split())
+                Enemy(int(x), int(y), time=int(time), size=(a, b))
 
         Life((590, 30), 1)
         Life((520, 30), 2)
@@ -594,7 +593,6 @@ class Level2:
 
 
 # page of the third (boss) level
-
 
 class Level3:
     def __init__(self):
@@ -975,20 +973,34 @@ class Manual(QWidget):
         By moving your mouse horizontally you 
         can control the position of your ship.
 
-        By pressing "SPACE" or 
-        by right-clicking you can 
-        shoot and destroy aliens. 
+        By pressing "SPACE" or by left-clicking 
+        you can shoot and destroy aliens. 
 
                                  Stay alive!''')
         self.label.setStyleSheet('font: 15pt Standard')
 
         self.close_btn = QPushButton('Close', self)
-        self.close_btn.setGeometry(100, 250, 100, 40)
+        self.close_btn.setGeometry(20, 250, 120, 40)
         self.close_btn.setStyleSheet('font: 20pt Standard')
+
+        self.extra_manual = QPushButton('Download', self)
+        self.extra_manual.setGeometry(155, 250, 130, 40)
+        self.extra_manual.setStyleSheet('font: 20pt Standard')
+
         self.close_btn.clicked.connect(self.terminate)
+        self.extra_manual.clicked.connect(self.download_rules)
 
     def terminate(self):
         self.close()
+
+    def download_rules(self):
+        location = os.path.abspath(QFileDialog.getSaveFileName(self, 'Save File', '', 'txt(*.txt)')[0])
+        if location:
+            with open(location, 'w') as manual:
+                data_txt = [x.strip() for x in open('data/database/manual.txt')]
+                for x in data_txt:
+                    manual.write(x)
+                    manual.write('\n')
 
 
 class FinishPage(QMainWindow):

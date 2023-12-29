@@ -1,0 +1,10 @@
+Instruction:
+
+1) There are three levels you can choose based on your preferences for complexity:
+    - first level is the easiest;
+    - second – normal;
+    - third – BOSS-level – is the most complicated. You barely manage to kill the BOSS because he is regularly reinforced by two alien's ships. By the way, be aware, you have the only life!
+2) At the start screen by tapping the button "Manual", you can be introduced with rules of the game;
+3) At the beginning, you have 3 lives, which one erases of, when you're damaged by alien. You lose, when you're out of lives. You win, when you kill all the aliens;
+4) When the game is over, you can return to the main screen by pressing any button;
+5) If you want to leave the game, you can press "Quit" on the main screen or click the cross at the top of the game-screen.
