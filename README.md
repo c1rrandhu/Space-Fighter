@@ -1,6 +1,6 @@
 # The authors of the project: 
-- c1rrandhu
 - nikitakosenkov
+- c1rrandhu
 
 ### In the game named "Space Fighter" you can express yourself like a space explorer that was trapped by dangerous aliens. Your goal is to prevent breaking down your ship from them by dodging their laser-bullets or shooting their ships. 
 
